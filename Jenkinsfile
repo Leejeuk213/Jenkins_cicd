@@ -9,7 +9,7 @@ pipeline {
               - name: jnlp
                 image: jenkins/inbound-agent:latest
               - name: docker
-                image: docker:latest
+                image: docker:dind
                 volumeMounts:
                 - name: docker-socket
                   mountPath: /var/run/docker.sock
