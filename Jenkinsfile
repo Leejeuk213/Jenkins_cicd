@@ -8,7 +8,6 @@ pipeline {
               containers:
               - name: jnlp
                 image: jenkins/inbound-agent:latest
-                args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
               - name: docker
                 image: docker:20.10
                 volumeMounts:
