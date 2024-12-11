@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            yaml '''
+            yaml """
             apiVersion: v1
             kind: Pod
             spec:
@@ -19,7 +19,7 @@ pipeline {
                 hostPath:
                   path: /var/run/docker.sock
                   type: Socket
-            '''
+            """
         }
     }
     environment {
