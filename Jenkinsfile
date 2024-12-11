@@ -1,5 +1,27 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: jnlp
+                image: jenkins/inbound-agent:latest
+                args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+              - name: docker
+                image: docker:20.10-dind
+                securityContext:
+                  privileged: true
+                volumeMounts:
+                - name: docker-socket
+                  mountPath: /var/run/docker.sock
+              volumes:
+              - name: docker-socket
+                emptyDir: {}
+            """
+        }
+    }
     environment {
         DOCKER_IMAGE = 'dlwpdnr213/gitops-test'
         DOCKER_TAG = 'latest'
@@ -12,14 +34,14 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                script {
+                container('docker') {
                     sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
-                script {
+                container('docker') {
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
                     }
