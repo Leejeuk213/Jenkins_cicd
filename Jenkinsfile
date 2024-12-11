@@ -10,15 +10,15 @@ pipeline {
                 image: jenkins/inbound-agent:latest
                 args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
               - name: docker
-                image: docker:20.10-dind
-                securityContext:
-                  privileged: true
+                image: docker:20.10
                 volumeMounts:
                 - name: docker-socket
-                  mountPath: /var/run/docker.sock
+                  mountPath: /var/run/docker.sock  # 호스트 Docker 소켓 마운트
               volumes:
               - name: docker-socket
-                emptyDir: {}
+                hostPath:
+                  path: /var/run/docker.sock  # 호스트의 Docker 소켓 경로
+                  type: Socket
             """
         }
     }
