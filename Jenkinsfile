@@ -10,18 +10,18 @@ pipeline {
                 image: jenkins/inbound-agent:latest
                 args:
                 - "-secret"
-                - "$(JENKINS_SECRET)"  # 변수는 반드시 따옴표로 감싸야 합니다.
+                - "\\$(JENKINS_SECRET)"  # $를 이스케이프 처리
                 - "-name"
-                - "$(JENKINS_NAME)"   # 마찬가지로 따옴표로 감싸야 합니다.
+                - "\\$(JENKINS_NAME)"   # $를 이스케이프 처리
               - name: docker
                 image: docker:20.10
                 volumeMounts:
                 - name: docker-socket
-                  mountPath: /var/run/docker.sock  # 호스트 Docker 소켓 마운트
+                  mountPath: /var/run/docker.sock
               volumes:
               - name: docker-socket
                 hostPath:
-                  path: /var/run/docker.sock  # 호스트의 Docker 소켓 경로
+                  path: /var/run/docker.sock
                   type: Socket
             """
         }
