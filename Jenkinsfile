@@ -17,8 +17,11 @@ pipeline {
                 - name: docker-socket
                   mountPath: /var/run/docker.sock
               volumes:
-              - name: docker-socket
-                emptyDir: {}
+              - hostPath:
+                  path: /var/run/docker.sock
+                  type: Socket
+    name: docker-socket
+
             """
         }
     }
