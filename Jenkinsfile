@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            yaml """
+            yaml '''
             apiVersion: v1
             kind: Pod
             spec:
@@ -10,9 +10,9 @@ pipeline {
                 image: jenkins/inbound-agent:latest
                 args:
                 - "-secret"
-                - "\\$(JENKINS_SECRET)"  # $를 이스케이프 처리
+                - "$(JENKINS_SECRET)"
                 - "-name"
-                - "\\$(JENKINS_NAME)"   # $를 이스케이프 처리
+                - "$(JENKINS_NAME)"
               - name: docker
                 image: docker:20.10
                 volumeMounts:
@@ -23,7 +23,7 @@ pipeline {
                 hostPath:
                   path: /var/run/docker.sock
                   type: Socket
-            """
+            '''
         }
     }
     environment {
