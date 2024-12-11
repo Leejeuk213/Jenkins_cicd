@@ -17,11 +17,10 @@ pipeline {
                 - name: docker-socket
                   mountPath: /var/run/docker.sock
               volumes:
-              - hostPath:
+              - name: docker-socket
+                hostPath:
                   path: /var/run/docker.sock
                   type: Socket
-    name: docker-socket
-
             """
         }
     }
