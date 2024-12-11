@@ -1,28 +1,29 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: jnlp
-                image: jenkins/inbound-agent:latest
-              - name: docker
-                image: docker:dind
-                securityContext:
-                  privileged: true
-                volumeMounts:
-                - name: docker-socket
-                  mountPath: /var/run/docker.sock
-              volumes:
-              - name: docker-socket
-                hostPath:
-                  path: /var/run/docker.sock
-                  type: Socket
-            """
-        }
-    }
+    agent any
+    // agent {
+    //     kubernetes {
+    //         yaml """
+    //         apiVersion: v1
+    //         kind: Pod
+    //         spec:
+    //           containers:
+    //           - name: jnlp
+    //             image: jenkins/inbound-agent:latest
+    //           - name: docker
+    //             image: docker:dind
+    //             securityContext:
+    //               privileged: true
+    //             volumeMounts:
+    //             - name: docker-socket
+    //               mountPath: /var/run/docker.sock
+    //           volumes:
+    //           - name: docker-socket
+    //             hostPath:
+    //               path: /var/run/docker.sock
+    //               type: Socket
+    //         """
+    //     }
+    // }
     environment {
         DOCKER_IMAGE = 'dlwpdnr213/gitops-test'
         DOCKER_TAG = 'latest'
