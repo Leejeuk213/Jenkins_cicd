@@ -10,6 +10,8 @@ pipeline {
                 image: jenkins/inbound-agent:latest
               - name: docker
                 image: docker:dind
+                securityContext:
+                  privileged: true
                 volumeMounts:
                 - name: docker-socket
                   mountPath: /var/run/docker.sock
