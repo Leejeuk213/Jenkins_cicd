@@ -8,9 +8,11 @@ pipeline {
               containers:
               - name: jnlp
                 image: jenkins/inbound-agent:latest
-                args: 
-                - "-secret $(JENKINS_SECRET)"
-                - "-name $(JENKINS_NAME)"
+                args:
+                - "-secret"
+                - "$(JENKINS_SECRET)"  # 변수는 반드시 따옴표로 감싸야 합니다.
+                - "-name"
+                - "$(JENKINS_NAME)"   # 마찬가지로 따옴표로 감싸야 합니다.
               - name: docker
                 image: docker:20.10
                 volumeMounts:
