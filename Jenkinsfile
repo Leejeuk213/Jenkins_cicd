@@ -30,7 +30,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/Leejeuk213/gitops_cicd.git'
+                git credentialsId: 'jenkins',branch: 'main', url: 'https://github.com/Leejeuk213/gitops_cicd.git'
             }
         }
         stage('Build Docker Image') {
