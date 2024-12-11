@@ -36,14 +36,14 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                container('docker') {
+                script {
                     sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
-                container('docker') {
+                script {
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
                     }
