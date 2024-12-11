@@ -9,17 +9,17 @@ pipeline {
               - name: jnlp
                 image: jenkins/inbound-agent:latest
                 args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-              - name: docker
-                image: docker:20.10-dind
+              - name: containerd
+                image: gcr.io/kaniko-project/executor:latest
                 securityContext:
                   privileged: true
                 volumeMounts:
-                - name: docker-socket
-                  mountPath: /var/run/docker.sock
+                - name: containerd-socket
+                  mountPath: /var/run/containerd/containerd.sock
               volumes:
-              - name: docker-socket
+              - name: containerd-socket
                 hostPath:
-                  path: /var/run/docker.sock
+                  path: /run/containerd/containerd.sock
                   type: Socket
             """
         }
@@ -34,18 +34,18 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Leejeuk213/gitops_cicd.git'
             }
         }
-        stage('Build Docker Image') {
+        stage('Build Image with ctr') {
             steps {
-                container('docker') {
-                    sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                container('containerd') {
+                    sh 'ctr image build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Push Image with ctr') {
             steps {
-                container('docker') {
+                container('containerd') {
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
-                        sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
+                        sh 'ctr images push ${DOCKER_IMAGE}:${DOCKER_TAG}'
                     }
                 }
             }
