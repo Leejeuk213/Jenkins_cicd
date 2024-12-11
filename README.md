@@ -1,3 +1,3 @@
 # Gitops
 
-Local kubernetes¿¡¼­ Jenkins¿Í argo cd ÀÌ¿ëÇÑ gitops ±¸Ãà
+Local kubernetesì—ì„œ Jenkinsì™€ argo cd ì´ìš©í•œ gitops êµ¬ì¶•
