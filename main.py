@@ -10,6 +10,7 @@ model = joblib.load('model.joblib')
 # Load the iris dataset
 iris = load_iris()  # Ãß°¡
 
+# root 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the ML Model API V1"}
