@@ -19,6 +19,15 @@ pipeline {
             }
         }
 
+        stage('Git Config Setup') {
+            steps {
+                script {
+                    sh 'git config --global user.name "Leejeuk213"'
+                    sh 'git config --global user.email "dlwpdnr213@naver.com"'
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git credentialsId: 'jenkins', branch: 'main', url: JENKINS_REPO
@@ -54,8 +63,6 @@ pipeline {
                         """
 
                         sh """
-                        git config user.name "Leejeuk213"
-                        git config user.email "dlwpdnr213@naver.com"
                         git add rollout.yaml
                         git commit -m "Update image tag to ${TAG}"
                         git push origin main
