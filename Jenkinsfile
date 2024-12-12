@@ -1,56 +1,71 @@
 pipeline {
     agent any
-    // agent {
-    //     kubernetes {
-    //         yaml """
-    //         apiVersion: v1
-    //         kind: Pod
-    //         spec:
-    //           containers:
-    //           - name: jnlp
-    //             image: jenkins/inbound-agent:latest
-    //           - name: docker
-    //             image: docker:dind
-    //             securityContext:
-    //               privileged: true
-    //             volumeMounts:
-    //             - name: docker-socket
-    //               mountPath: /var/run/docker.sock
-    //           volumes:
-    //           - name: docker-socket
-    //             hostPath:
-    //               path: /var/run/docker.sock
-    //               type: Socket
-    //         """
-    //     }
-    // }
+
     environment {
         DOCKER_IMAGE = 'dlwpdnr213/gitops-test'
-        DOCKER_TAG = 'latest'
+        GIT_COMMIT_HASH = ''
+        TAG = ''
+        JENKINS_REPO = 'https://github.com/Leejeuk213/gitops_cicd.git'
+        ARGOCD_REPO = 'https://github.com/Leejeuk213/argocd_yaml.git'
     }
+
     stages {
-        stage('Clone Repository') {
-            steps {
-                git credentialsId: 'jenkins',branch: 'main', url: 'https://github.com/Leejeuk213/gitops_cicd.git'
-            }
-        }
-        stage('Build Docker Image') {
+        stage('Initialize') {
             steps {
                 script {
-                    sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                    GIT_COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    TAG = "build-${GIT_COMMIT_HASH}"
                 }
             }
         }
+
+        stage('Clone Repository') {
+            steps {
+                git credentialsId: 'jenkins', branch: 'main', url: JENKINS_REPO
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:${TAG} ."
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
-                        sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
+                        sh "docker push ${DOCKER_IMAGE}:${TAG}"
+                    }
+                }
+            }
+        }
+
+        stage('Update Argo CD Configuration') {
+            steps {
+                script {
+                    dir('argocd_yaml') {
+                        git credentialsId: 'jenkins', branch: 'main', url: ARGOCD_REPO
+
+                        sh """
+                        sed -i 's|image: .*|image: ${DOCKER_IMAGE}:${TAG}|' rollout.yaml
+                        """
+
+                        sh """
+                        git config user.name "Leejeuk213"
+                        git config user.email "dlwpdnr213@naver.com"
+                        git add rollout.yaml
+                        git commit -m "Update image tag to ${TAG}"
+                        git push origin main
+                        """
                     }
                 }
             }
         }
     }
+
     post {
         success {
             echo 'Pipeline completed successfully!'
