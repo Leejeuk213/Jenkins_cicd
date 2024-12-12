@@ -28,9 +28,20 @@ pipeline {
         //     }
         // }
 
+        // stage('Clone Repository') {
+        //     steps {
+        //         git credentialsId: 'jenkins', branch: 'main', url: JENKINS_REPO
+        //     }
+        // }
+
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'jenkins', branch: 'main', url: JENKINS_REPO
+                script {
+                    checkout([$class: 'GitSCM',
+                              branches: [[name: 'main']],
+                              userRemoteConfigs: [[url: 'JENKINS_REPO',
+                                                   credentialsId: 'jenkins']]])
+                }
             }
         }
 
