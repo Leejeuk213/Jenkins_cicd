@@ -13,7 +13,7 @@ iris = load_iris()  # Ãß°¡
 # root 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the ML Model API V1"}
+    return {"message": "Welcome to the ML Model API V2"}
 
 @app.post("/predict/")
 def predict(data: dict):
