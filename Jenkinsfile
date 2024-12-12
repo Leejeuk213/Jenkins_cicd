@@ -19,14 +19,14 @@ pipeline {
             }
         }
 
-        stage('Git Config Setup') {
-            steps {
-                script {
-                    sh 'git config --global user.name "Leejeuk213"'
-                    sh 'git config --global user.email "dlwpdnr213@naver.com"'
-                }
-            }
-        }
+        // stage('Git Config Setup') {
+        //     steps {
+        //         script {
+        //             sh 'git config --global user.name "Leejeuk213"'
+        //             sh 'git config --global user.email "dlwpdnr213@naver.com"'
+        //         }
+        //     }
+        // }
 
         stage('Clone Repository') {
             steps {
